@@ -113,4 +113,19 @@ export namespace Transactions {
     });
     export type PictureData = typeof Pictures.sample;
     export type PictureArr = DataArr<typeof Pictures.data.structure>;
+
+
+
+
+    export const bulkUpdate = (data: {
+        transactions: TransactionData[];
+        name?: string;
+        tags?: string[];
+        reviewed?: boolean;
+    }) => Transactions.call('bulk-update', {
+        transactions: data.transactions.map(t => t.data.id),
+        name: data.name,
+        tags: data.tags,
+        reviewed: data.reviewed,
+    });
 }

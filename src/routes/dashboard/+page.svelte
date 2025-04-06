@@ -7,6 +7,8 @@
 	import { onMount } from "svelte";
     import DB from '$lib/components/dashboard/Dashboard.svelte';
     import Card from "$lib/components/dashboard/Card.svelte";
+    import nav from '$lib/imports/budget.js';
+    nav();
 
     const { data } = $props();
 
@@ -68,7 +70,7 @@
                     const newRes = await Transactions.Buckets.new({
                         name: res.value.value.name,
                         description: res.value.value.description,
-                        balance: Math.max(Number(res.value.value.balance) * 100),
+                        balance: Math.round(Number(res.value.value.balance) * 100),
                         color: '#000000',
                         icon: 'account_balance',
                         type: 'bucket',

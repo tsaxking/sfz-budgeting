@@ -10,6 +10,9 @@
 	import TagList from '$lib/components/tags/TagList.svelte';
     import { listen } from '$lib/utils/struct-listener.js';
 	import { onMount } from 'svelte';
+    import nav from '$lib/imports/budget.js';
+	import Chart from '$lib/components/transactions/Chart.svelte';
+    nav();
 
     const { data } = $props();
     const bucket = $derived(data.bucket);
@@ -55,8 +58,19 @@
         }
     });
 
+    const chart = new Dashboard.Card({
+        name: 'Chart',
+        icon: 'show_chart',
+        id: 'chart',
+        iconType: 'material-icons',
+        size: {
+            height: 1,
+            width: 2,
+        }
+    });
+
     const dashboard = $state(new Dashboard.Dashboard({
-        cards: [balance, transactionCard, tags],
+        cards: [balance, transactionCard, tags, chart],
         id: 'bucket',
         name: `Bucket: ${bucket.data.name}`,
     }));
@@ -86,6 +100,14 @@
         <Card card={tags}>
             {#snippet body()}
                 <TagList />
+            {/snippet}
+        </Card>
+        <Card card={chart}>
+            {#snippet body()}
+                <Chart 
+                    transactions={$transactions}
+                    balance={(Number(bucket.data.balance) - $transactions.reduce((acc, t) => acc + Number(t.data.amount), 0)) / 100}
+                />
             {/snippet}
         </Card>
     {/snippet}

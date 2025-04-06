@@ -30,7 +30,7 @@
             reviewed: reviewed,
         }));
         await saveTags();
-        location.reload(); // to refresh the tags
+        location.reload();
     }
 
     onMount(() => {
@@ -82,7 +82,6 @@
                             } else {
                                 selectedTags.delete(tag.data.id);
                             }
-                            console.log('selectedTags', selectedTags);
                         }} />
                         <label class="ms-3" for="transaction-tag-{tag.data.id}">
                             <Tag

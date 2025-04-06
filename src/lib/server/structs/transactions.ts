@@ -1,7 +1,7 @@
 import { boolean, integer } from 'drizzle-orm/pg-core';
 import { text } from 'drizzle-orm/pg-core';
 import { Struct } from 'drizzle-struct/back-end';
-import { attemptAsync } from 'ts-utils/check';
+import { attemptAsync, resolveAll } from 'ts-utils/check';
 import { DB } from '../db';
 import { eq } from 'drizzle-orm';
 import { Account } from './account';
@@ -136,7 +136,7 @@ export namespace Transactions {
                 for (const record of parsed) {
                     const date = new Date(record.Date);
                     const description = record.Description;
-                    const amount = Math.max(parseFloat(record.Amount) * 100);
+                    const amount = Math.round(parseFloat(record.Amount) * 100);
                     stream.add({
                         date,
                         description,
@@ -164,7 +164,19 @@ export namespace Transactions {
 
     CSVImports.on('create', (csvImport) => {
         const contents = parseCSV(csvImport.data.contents);
-        contents.pipe((record) => {
+        contents.pipe(async (record) => {
+            console.log('record', record);
+            const exists = await Transactions.fromProperty('bucketId', csvImport.data.bucketId, { type: 'stream', }).await();
+            if (exists.isOk()) {
+                const find = exists.value.find(t => {
+                    const date = new Date(t.data.date);
+                    return date.getTime() === record.date.getTime() && t.data.description === record.description && record.amount === t.data.amount;
+                });
+                if (find) {
+                    // already exists
+                    return;
+                }
+            }
             Transactions.new({
                 bucketId: csvImport.data.bucketId,
                 importId: csvImport.id,
@@ -302,6 +314,76 @@ export namespace Transactions {
         changeBalance(bucketId, amount);
     });
 
+    Transactions.callListen('bulk-update', async (event, data) => {
+        if (!event.locals.account) {
+            return {
+                success: false,
+                message: 'Not logged in',
+            }
+        }
+
+        if (!await Account.isAdmin(event.locals.account)) {
+            return {
+                success: false,
+                message: 'Not authorized',
+            }
+        }
+
+        const parsed = z.object({
+            transactions: z.array(z.string()),
+            name: z.string().optional(),
+            tags: z.array(z.string()).optional(),
+            reviewed: z.boolean().optional(),
+        }).safeParse(data);
+
+
+        if (!parsed.success) {
+            return {
+                success: false,
+                message: 'Invalid data',
+            }
+        }
+
+        const { transactions, name, tags, reviewed } = parsed.data;
+
+        const res = resolveAll(await Promise.all(transactions.map(async (id) => {
+            return attemptAsync(async () => {
+                const transaction = await Transactions.fromId(id).unwrap();
+                if (!transaction) return; // ignore if not found
+
+                await transaction.update({
+                    name: name ?? transaction.data.name,
+                    reviewed: reviewed ?? transaction.data.reviewed,
+                }).unwrap();
+
+                if (tags) {
+                    const currentTags = await getTags(transaction).unwrap();
+                    await Promise.all(currentTags.map(t => t.delete()));
+                    await Promise.all(tags.map(async (tagId) => {
+                        const tag = await Tags.fromId(tagId).unwrap();
+                        if (tag) {
+                            await TransactionTags.new({
+                                transactionId: transaction.id,
+                                tagId: tag.id,
+                            });
+                        }
+                    }));
+                }
+            });
+        })));
+
+        if (res.isErr()) {
+            return {
+                success: false,
+                message: 'Failed to update transactions',
+            }
+        }
+
+        return {
+            success: true,
+        }
+    });
+
     export const Tags = new Struct({
         name: 'tags',
         structure: {
@@ -339,10 +421,17 @@ export namespace Transactions {
         return attemptAsync(async () => {
             const res = await DB.select()
                 .from(Transactions.table)
-                .innerJoin(TransactionTags.table, eq(TransactionTags.table.tagId, Transactions.table.id))
+                .innerJoin(TransactionTags.table, eq(TransactionTags.table.transactionId, Transactions.table.id))
                 .where(eq(TransactionTags.table.tagId, tagId));
 
-            return res.map(r => Transactions.Generator(r.transactions));
+            return Promise.all(res.map(async r => {
+                const transaction = Transactions.Generator(r.transactions);
+                const tags = await getTags(transaction).unwrap();
+                return {
+                    transaction,
+                    tags,
+                }
+            }));
         });
     };
 

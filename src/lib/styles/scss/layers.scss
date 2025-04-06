@@ -128,7 +128,7 @@ textarea.form-control {
     }
 }
 
-select.form-control {
+select.form-select, select.form-control {
     background-color: var(--layer-1);
     color: var(--text-layer-1);
     border-color: var(--layer-3);

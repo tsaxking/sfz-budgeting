@@ -39,7 +39,7 @@
 
                     bucket.update(b => ({
                         ...b,
-                        balance: Math.max(newBalance * 100)
+                        balance: Math.round(newBalance * 100)
                     }));
                 }}>
                     <i class="material-icons">edit</i>
