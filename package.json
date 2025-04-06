@@ -92,6 +92,7 @@
 		"check-password-strength": "^2.0.10",
 		"cli-table": "^0.3.11",
 		"colors": "git+https://github.com/tsaxking/colors.git",
+		"csv-parse": "^5.6.0",
 		"dotenv": "^16.4.7",
 		"drizzle-orm": "^0.38.3",
 		"drizzle-struct": "github:tsaxking/drizzle-struct",

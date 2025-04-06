@@ -1,0 +1,226 @@
+:root {
+    @for $i from 0 through 5 {
+      --layer-#{$i}: #{nth((
+        #18181b, #1f1f23, #25252a, #2d2d33, #373740, #43434d
+      ), $i + 1)};
+      
+      --text-layer-#{$i}: #{nth((
+        #ffffff, #e4e4e7, #cfcfd4, #b8b8bf, #a1a1aa, #8b8b96
+      ), $i + 1)};
+    }
+  }
+  
+  @for $i from 0 through 5 {
+    .layer-#{$i} {
+      background-color: var(--layer-#{$i});
+      color: var(--text-layer-#{$i});
+      @if $i > 0 {
+        border-radius: 3px;
+      }
+    }
+  
+    // table.table-#{$i} {
+    //   background-color: var(--layer-#{$i});
+    //   color: var(--text-layer-#{$i});
+    // }
+  }
+  
+
+//   Layered table style override
+.table {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    th,
+    td {
+      background-color: var(--layer-1);
+      color: var(--text-layer-1);
+      border-color: var(--layer-3);
+    }
+  
+    thead th {
+      background-color: var(--layer-2);
+      color: var(--text-layer-0);
+    }
+  
+    tbody tr {
+      &:nth-child(even) {
+        background-color: var(--layer-0);
+      }
+  
+      &:hover {
+        background-color: var(--layer-3);
+      }
+    }
+  
+    tfoot {
+      background-color: var(--layer-2);
+      color: var(--text-layer-1);
+    }
+  
+    // Optional: Add border radius if you want rounded tables
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+
+  
+
+ul.list, ol.list {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    li.list-item {
+      background-color: var(--layer-1);
+      color: var(--text-layer-1);
+      border-color: var(--layer-3);
+  
+      &:nth-child(even) {
+        background-color: var(--layer-0);
+      }
+  
+      &:hover {
+        background-color: var(--layer-3);
+      }
+    }
+}
+
+ul.list {
+    padding: 10px;
+    li.list-item {
+        margin-bottom: 5px;
+        // Remove default list style
+        list-style: none;
+    }
+}
+
+input.form-control {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    &:focus {
+      background-color: var(--layer-0);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+  
+    &::placeholder {
+      color: var(--text-layer-2);
+    }
+}
+
+textarea.form-control {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    &:focus {
+      background-color: var(--layer-0);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+  
+    &::placeholder {
+      color: var(--text-layer-2);
+    }
+}
+
+select.form-control {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    &:focus {
+      background-color: var(--layer-0);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+  
+    &::placeholder {
+      color: var(--text-layer-2);
+    }
+}
+
+input.form-check {
+    background-color: var(--layer-1);
+    color: var(--text-layer-1);
+    border-color: var(--layer-3);
+  
+    &:focus {
+      background-color: var(--layer-0);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+  
+    &::placeholder {
+      color: var(--text-layer-2);
+    }
+    &:checked {
+      background-color: var(--layer-2);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+    &:hover {
+      background-color: var(--layer-3);
+      color: var(--text-layer-0);
+      border-color: var(--layer-4);
+    }
+    &:active {
+      background-color: var(--layer-4);
+      color: var(--text-layer-0);
+      border-color: var(--layer-5);
+    }
+    &:disabled {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:hover {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:checked {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:active {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus:hover {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus:checked {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus:active {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus:checked:hover {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    }
+    &:disabled:focus:checked:active {
+      background-color: var(--layer-0);
+      color: var(--text-layer-2);
+      border-color: var(--layer-3);
+    } 
+}

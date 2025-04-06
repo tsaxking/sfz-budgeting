@@ -5,3 +5,5 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/bs-overwrite.css';
 import './styles/global.css';
 import './styles/style.css';
+import './styles/layers.css';
+import './styles/grid.css'

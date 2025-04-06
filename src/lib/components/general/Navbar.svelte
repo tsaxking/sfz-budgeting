@@ -10,7 +10,7 @@
 	let notifs = $state(0);
 </script>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg layer-2">
 	<div class="d-flex justify-content-between w-100">
 		<div class="start d-flex align-items-center">
 			<button
