@@ -219,6 +219,30 @@ export namespace Transactions {
         return TransactionTags.fromProperty('transactionId', transaction.id, { type: 'stream' }).await();
     };
 
+    export const getTransactionsBetween = (from: Date, to: Date) => {
+        return attemptAsync(async () => {
+            const transactions = await Transactions.all({ type: 'stream' }).await().unwrap();
+            transactions.sort((a, b) => {
+                const A = new Date(a.data.date);
+                const B = new Date(b.data.date);
+                return A.getTime() - B.getTime();
+            }
+            );
+            return Promise.all(transactions.filter(t => {
+                const date = new Date(t.data.date);
+                return date.getTime() >= from.getTime() && date.getTime() <= to.getTime();
+            }
+            ).map(async t => {
+                const tags = await getTags(t).unwrap();
+                return {
+                    transaction: t,
+                    tags,
+                }
+            }
+            ));
+        });
+    };
+
     export const transactionsFromBucket = (bucket: BucketData) => {
         return attemptAsync(async () => {
             const transactions = await Transactions.fromProperty('bucketId', bucket.id, { type: 'stream' }).await().unwrap();
@@ -378,6 +402,95 @@ export namespace Transactions {
                 message: 'Failed to update transactions',
             }
         }
+
+        return {
+            success: true,
+        }
+    });
+
+    Transactions.callListen('create', async (event, data) => {
+        if (!event.locals.account) {
+            return {
+                success: false,
+                message: 'Not logged in',
+            }
+        }
+
+        if (!await Account.isAdmin(event.locals.account)) {
+            return {
+                success: false,
+                message: 'Not authorized',
+            }
+        }
+
+        const parsed = z.object({
+            bucket: z.string(),
+            name: z.string(),
+            amount: z.number(),
+            date: z.string(),
+            tags: z.array(z.string()),
+            reviewed: z.boolean(),
+            description: z.string(),
+        }).safeParse(data);
+
+        if (!parsed.success) {
+            console.error('Failed to parse data', parsed.error);
+            return {
+                success: false,
+                message: 'Invalid data',
+            }
+        }
+
+        const { bucket, name, amount, date, tags, reviewed, description } = parsed.data;
+
+        if (new Date(date).toString() === 'Invalid Date') {
+            return {
+                success: false,
+                message: 'Invalid date',
+            }
+        }
+        if (isNaN(amount)) {
+            return {
+                success: false,             
+                message: 'Invalid amount',      
+            }   
+        }
+
+
+        const bucketData = await Buckets.fromId(bucket).unwrap();
+        if (!bucketData) {
+            return {
+                success: false,
+                message: 'Bucket not found',
+            }
+        }
+        const transaction = await Transactions.new({
+            bucketId: bucket,
+            name,
+            amount,
+            date,
+            reviewed,
+            description,
+            originalRow: JSON.stringify(parsed.data),
+            importId: '',
+        });
+
+        if (transaction.isErr()) {
+            return {
+                success: false,
+                message: 'Failed to create transaction',
+            }
+        }
+
+        await Promise.all(tags.map(async (tagId) => {
+            const tag = await Tags.fromId(tagId).unwrap();
+            if (tag) {
+                await TransactionTags.new({
+                    transactionId: transaction.value.id,
+                    tagId: tag.id,
+                });
+            }
+        }));
 
         return {
             success: true,

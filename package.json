@@ -27,7 +27,8 @@
 		"check:system": "pnpm run lint && pnpm run check && pnpm run test",
 		"system:check": "pnpm run check:system",
 		"build:email": "pnpm script mjml-batch",
-		"backup": "pnpm script backup"
+		"backup": "pnpm script backup",
+		"restore": "pnpm script restore"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.3",

@@ -16,9 +16,11 @@
     const transactions = $state(data.transactions);
     const budgetTags = $state(data.tags);
     const transactionTags = $state(data.transactionTags);
-    const total = $derived(transactions.data.reduce((acc, t) => acc + Number(t.data.amount), 0) * -1);
-    const normalized = $derived(total / Number(budget.data.amount));
+    const spent = $derived(transactions.data.reduce((acc, t) => acc + Number(t.data.amount), 0) * -1);
+    const normalized = $derived(spent / Number(budget.data.amount));
     const date = $derived(new Date(data.date));
+    const total = $derived(Number(budget.data.amount));
+    const left = $derived(total - spent);
 
     onMount(() => {
         const offTags = listen(budgetTags, (t) => t.data.budgetId === budget.data.id);
@@ -94,6 +96,28 @@
             </button>
         </div>
         <hr>
+    </div>
+    <div class="row mb-3">
+        {#if spent > total}
+            <span class="text-danger">{(left / 100).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+            })} Over Budget</span>
+        {:else if total === spent}
+            <span class="text-warning">
+                {(left / 100).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                })} At Budget
+            </span>
+        {:else}
+            <span class="text-success">
+                {(left / 100).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                })} Under Budget
+            </span>
+        {/if}
     </div>
     <div class="row mb-3">
         <div class="d-flex">

@@ -192,6 +192,7 @@
 						if (!res) return;
 						transaction.delete();
 						m.hide();
+						location.reload();
 					}
 				}
 			], (body) => {

@@ -26,7 +26,7 @@
 				class="
 					navbar-brand
 				"
-				href="/home">{title}</a
+				href="/dashboard">{title}</a
 			>
 		</div>
 		<div class="end">

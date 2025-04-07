@@ -116,8 +116,8 @@
 	});
 </script>
 
-<div class="card h-100">
-	<div class="card-body {classes} h-100">
+<div class="card h-100 {classes}">
+	<div class="card-body h-100">
 		<div class="btn-group" role="group" aria-label="Transaction Chart Type">
 			<input
 				type="radio"
@@ -150,6 +150,6 @@
 			<label class="btn btn-outline-primary" for="chart-months">Months</label>
 		</div>
 
-		<canvas bind:this={canvas}></canvas>
+		<canvas bind:this={canvas} style="flex: 1;"></canvas>
 	</div>
 </div>

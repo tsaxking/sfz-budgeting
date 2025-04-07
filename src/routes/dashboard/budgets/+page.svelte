@@ -16,6 +16,10 @@
 
     const budgets = $state(data.budgets);
 
+    const total = $derived(budgets.reduce((acc, b) => acc + Number(b.budget.data.amount), 0));
+    const spent = $derived(budgets.reduce((acc, b) => acc + Number(b.transactions.reduce((acc, t) => acc + Number(t.data.amount), 0)), 0) * -1);
+    const left = $derived(total - spent);
+
     const showDetails = async (budget: Budgeting.BudgetData, tags: Budgeting.BudgetTagData[]) => {
         let save = () => {};
         const m = rawModal('Budget Details', [
@@ -65,32 +69,83 @@
 </script>
 
 <div class="container layer-1">
-    {#each budgets as budget}
     <div class="row mb-3">
-        <div class="card">
-            <div class="card-body layer-3">
+        <h1>Budgets</h1>
+    </div>
+    <div class="row mb-3">
+        <div class="card  layer-3">
+            <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5>
-                        {budget.budget.data.name}
+                        Budget Overview
+                        <small class="text-muted">
+                            {#if spent > total}
+                                <span class="text-danger">{(left / 100).toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                })} Over Budget</span>
+                            {:else if spent === total}
+                                <span class="text-warning">
+                                    {(left / 100).toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                    })} At Budget
+                                </span>
+                            {:else}
+                                <span class="text-success">
+                                    {(left / 100).toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                    })} Under Budget
+                                </span>
+                            {/if}
+                        </small>
                     </h5>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm" onclick={() => showDetails(budget.budget, budget.tags)}>
-                            <i class="material-icons">edit</i>
-                        </button>
-                        <a href="/dashboard/budgets/{budget.budget.data.id}" class="btn btn-sm">
-                            <i class="material-icons">visibility</i>
-                        </a>
-                    </div>
                 </div>
-        <Progress
-        budget={budget.budget}
-        tags={budget.tags}
-        transactions={budget.transactions}
-    />
+                <div class="progress position-relative">
+                    <div class="progress-bar"
+                        style="width: {(spent / total) * 100}%;"
+                    >
+                    </div>
+                    <p class="mb-0 position-absolute">
+                        {(spent / 100).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                        })} of {(total / 100).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                        })}
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-{/each}
+    {#each budgets as budget}
+        <div class="row mb-3">
+            <div class="card layer-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>
+                            {budget.budget.data.name}
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm" onclick={() => showDetails(budget.budget, budget.tags)}>
+                                <i class="material-icons">edit</i>
+                            </button>
+                            <a href="/dashboard/budgets/{budget.budget.data.id}" class="btn btn-sm">
+                                <i class="material-icons">visibility</i>
+                            </a>
+                        </div>
+                    </div>
+            <Progress
+            budget={budget.budget}
+            tags={budget.tags}
+            transactions={budget.transactions}
+        />
+                </div>
+            </div>
+        </div>
+    {/each}
     <div class="row mb-3">
         <button type="button" class="btn btn-primary" onclick={async () => {
             const res = await new Form()

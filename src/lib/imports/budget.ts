@@ -20,6 +20,12 @@ export default () => {
                 icon: 'account_balance',
                 type: 'material-icons',
                 href: '/dashboard/budgets',
+            },
+            {
+                name: 'Report',
+                icon: 'assessment',
+                type: 'material-icons',
+                href: '/dashboard/report',
             }
         ],
     });

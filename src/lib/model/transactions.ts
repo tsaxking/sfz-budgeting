@@ -128,4 +128,20 @@ export namespace Transactions {
         tags: data.tags,
         reviewed: data.reviewed,
     });
+
+    export const createTransaction = (data: {
+        bucket: BucketData;
+        name: string;
+        amount: number;
+        date: Date;
+        tags: string[];
+        reviewed: boolean;
+        description: string;
+    }) => {
+        return Transactions.call('create', {
+            ...data,
+            bucket: data.bucket.data.id,
+            date: data.date.toISOString(),
+        });
+    };
 }

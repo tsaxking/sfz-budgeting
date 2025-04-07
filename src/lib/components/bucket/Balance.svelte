@@ -1,8 +1,10 @@
 <script lang="ts">
     import { Transactions } from '$lib/model/transactions';
     import { loadFileContents } from '$lib/utils/downloads.js';
-    import { alert, confirm, prompt } from '$lib/utils/prompts.js';
+    import { alert, confirm, prompt, rawModal } from '$lib/utils/prompts.js';
+	import { mount } from 'svelte';
 	import { cost } from 'ts-utils/text';
+	import New from '../transactions/New.svelte';
 
     interface Props {
         bucket: Transactions.BucketData;
@@ -103,6 +105,39 @@
             upload
         </i>
         Import CSV
+    </button>
+    <button type="button" class="btn btn-success" onclick={async () => {
+        let save = () => new Promise<boolean>((res) => res(false));
+        const m = rawModal('Create Transaction', [
+            {
+                text: 'Close',
+                color: 'secondary',
+                onClick: () => m.hide(),
+            },
+            {
+                text: 'Save',
+                color: 'success',
+                onClick: async () => {
+                    const res = await save();
+                    if (!res) return;
+                    m.hide();
+                    location.reload();
+                },
+            }
+        ], (body) => {
+            const newTransaction = mount(New, {
+                target: body,
+                props: {
+                    bucket,
+                }
+            });
+            save = newTransaction.save.bind(newTransaction);
+            return newTransaction;
+        });
+        m.show();
+    }}>
+        <i class="material-icons">add</i>
+        New Transaction
     </button>
     </div>
 </div>
