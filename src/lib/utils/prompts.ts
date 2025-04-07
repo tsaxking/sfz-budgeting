@@ -90,10 +90,10 @@ export const prompt = async (message: string, config?: PromptConfig) => {
                         <div>
                             <p>${message}</p>
                             ${
-								config?.multiline
-									? `<textarea data-id="input" class="form-control" placeholder="${config?.placeholder || ''}"></textarea>`
-									: `<input data-id="input" type="${config?.type || 'text'}" class="form-control" placeholder="${config?.placeholder || ''}">`
-							}
+															config?.multiline
+																? `<textarea data-id="input" class="form-control" placeholder="${config?.placeholder || ''}"></textarea>`
+																: `<input data-id="input" type="${config?.type || 'text'}" class="form-control" placeholder="${config?.placeholder || ''}">`
+														}
                         </div>
                     `,
 					setup: (el) => {
@@ -439,14 +439,18 @@ export const notify = <Type extends 'toast' | 'alert'>(config: NotificationConfi
 	});
 };
 
-export const rawModal = (title: string, buttons: ButtonConfig[], onMount: (body: HTMLDivElement) => ReturnType<typeof mount>) => {
+export const rawModal = (
+	title: string,
+	buttons: ButtonConfig[],
+	onMount: (body: HTMLDivElement) => ReturnType<typeof mount>
+) => {
 	if (!modalTarget) throw new Error('Cannot show modal in non-browser environment');
 	const modal = mount(Modal, {
 		target: modalTarget,
 		props: {
 			title,
 			body: createRawSnippet(() => ({
-				render: () => `<div class="body-content"></div>`,
+				render: () => `<div class="body-content"></div>`
 			})),
 			buttons: createButtons(buttons)
 		}
@@ -465,6 +469,6 @@ export const rawModal = (title: string, buttons: ButtonConfig[], onMount: (body:
 		modal,
 		hide: () => modal.hide(),
 		show: () => modal.show(),
-		on: modal.on.bind(modal),
-	}
+		on: modal.on.bind(modal)
+	};
 };

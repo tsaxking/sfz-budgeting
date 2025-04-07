@@ -13,9 +13,7 @@
 	const { body, dashboard }: Props = $props();
 </script>
 
-<div
-	class="layer-1"
->
+<div class="layer-1">
 	<h1>{capitalize(dashboard.name)}</h1>
 	<MinimizedCards {dashboard} />
 	<div

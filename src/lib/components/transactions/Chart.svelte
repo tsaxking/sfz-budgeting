@@ -1,37 +1,37 @@
 <script lang="ts">
-	import type { Transactions } from "$lib/model/transactions";
-	import { Chart } from "chart.js";
-	import { onMount } from "svelte";
+	import type { Transactions } from '$lib/model/transactions';
+	import { Chart } from 'chart.js';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		transactions: Transactions.TransactionData[];
 		balance?: number;
-		type?: "days" | "weeks" | "months"; // default 'days'
+		type?: 'days' | 'weeks' | 'months'; // default 'days'
 		classes?: string;
 	}
 
-	let { transactions, balance = 0, type = "days", classes = "" }: Props = $props();
+	let { transactions, balance = 0, type = 'days', classes = '' }: Props = $props();
 
-    $effect(() => render(type));
+	$effect(() => render(type));
 
 	let canvas: HTMLCanvasElement;
 	let chart: Chart;
 
 	const groupTransactions = (
 		transactions: Transactions.TransactionData[],
-		type: "days" | "weeks" | "months"
+		type: 'days' | 'weeks' | 'months'
 	) => {
 		const map = new Map<string, { income: number; expense: number }>();
 
 		for (const tx of transactions) {
 			let date: string;
 			const d = new Date(String(tx.data.date));
-			if (type === "days") {
-				date = d.toISOString().split("T")[0];
-			} else if (type === "weeks") {
+			if (type === 'days') {
+				date = d.toISOString().split('T')[0];
+			} else if (type === 'weeks') {
 				const weekStart = new Date(d);
 				weekStart.setDate(d.getDate() - d.getDay());
-				date = weekStart.toISOString().split("T")[0];
+				date = weekStart.toISOString().split('T')[0];
 			} else {
 				date = d.toISOString().slice(0, 7); // YYYY-MM
 			}
@@ -65,19 +65,19 @@
 	const render = (type: 'days' | 'weeks' | 'months') => {
 		if (!canvas) return;
 
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return console.error("Failed to get canvas context");
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return console.error('Failed to get canvas context');
 		if (chart) chart.destroy();
 
 		const { labels, incomes, expenses, balances } = groupTransactions(transactions, type);
 
 		chart = new Chart(ctx, {
-			type: "line",
+			type: 'line',
 			data: {
 				labels,
 				datasets: [
 					{
-						label: "Income",
+						label: 'Income',
 						data: incomes,
 						// borderColor: "green",
 						// backgroundColor: "rgba(0, 128, 0, 0.1)",
@@ -85,7 +85,7 @@
 						tension: 0.3
 					},
 					{
-						label: "Expenses",
+						label: 'Expenses',
 						data: expenses,
 						// borderColor: "red",
 						// backgroundColor: "rgba(255, 0, 0, 0.1)",
@@ -93,7 +93,7 @@
 						tension: 0.3
 					},
 					{
-						label: "Balance",
+						label: 'Balance',
 						data: balances,
 						// borderColor: "blue",
 						// backgroundColor: "rgba(0, 0, 255, 0.1)",
@@ -104,9 +104,8 @@
 			},
 			options: {
 				responsive: true,
-                maintainAspectRatio: false,
-				scales: {
-				}
+				maintainAspectRatio: false,
+				scales: {}
 			}
 		});
 	};
