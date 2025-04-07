@@ -33,8 +33,6 @@ export const load = async (event) => {
 	const afterTransactions = transactions.filter((t) => {
 		return new Date(t.transaction.data.date) >= new Date(to);
 	});
-	console.log('fromTransactions', fromTransactions);
-	console.log('afterTransactions', afterTransactions);
 
 	const startBalance =
 		fromTransactions.reduce((acc, t) => {
@@ -57,7 +55,7 @@ export const load = async (event) => {
 			)
 			.sort(
 				(a, b) =>
-					new Date(a.transaction.data.date).getTime() - new Date(b.transaction.data.date).getTime()
+					new Date(b.transaction.data.date).getTime() - new Date(a.transaction.data.date).getTime()
 			)
 			.map((t) => ({
 				transaction: t.transaction.safe(),
