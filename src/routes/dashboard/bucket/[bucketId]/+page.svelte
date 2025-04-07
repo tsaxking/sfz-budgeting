@@ -17,7 +17,6 @@
 	const { data } = $props();
 	const bucket = $derived(data.bucket);
 	const transactions = $state(data.transactions);
-	$inspect(transactions);
 	transactions.sort((a, b) => {
 		const aDate = new Date(String(a.data.date));
 		const bDate = new Date(String(b.data.date));
@@ -69,11 +68,13 @@
 		}
 	});
 
-	const dashboard = new Dashboard.Dashboard({
+	const dashboard = $state(
+		new Dashboard.Dashboard({
 			cards: [balance, transactionCard, tags, chart],
 			id: 'bucket',
-			name: `Bucket: ${bucket.data.name}`
-		});
+			name: `Bucket: ${$bucket.name}`
+		})
+	);
 
 	onMount(() => {
 		const offTransactions = listen(transactions, (t) => t.data.bucketId === bucket.data.id);

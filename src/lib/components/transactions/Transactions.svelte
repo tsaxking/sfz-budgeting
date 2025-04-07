@@ -74,7 +74,8 @@
 			width: 100,
 			field: 'data.amount',
 			filter: true,
-			cellRenderer: ({ value }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ value }: any) => {
 				const amt = Number(value);
 				const cls = amt > 0 ? 'text-success' : amt < 0 ? 'text-danger' : '';
 				return `<span class="${cls}">${cost(amt)}</span>`;
@@ -90,7 +91,8 @@
 			width: 100,
 			headerName: 'Reviewed',
 			filter: true,
-			cellRenderer: ({ data }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ data }: any) => {
 				const reviewed = data.data.reviewed;
 				const icon = reviewed ? 'check_circle' : 'cancel';
 				const color = reviewed ? 'text-success' : 'text-danger';
@@ -103,7 +105,8 @@
 			headerName: 'Details',
 			filter: true,
 			field: 'data.description',
-			cellRenderer: ({ data }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ data }: any) => {
 				const description = data.data.description || '';
 				return `<span class="text-truncate" style="max-width: 200px;" title="${description}">${description}</span>`;
 			}
@@ -112,7 +115,8 @@
 			headerName: 'Tags',
 			filter: true,
 			field: 'tags',
-			cellRenderer: ({ data }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ data }: any) => {
 				const tagList = transactionTags[String(data.data.id)] || [];
 				return tagList
 					.map((tag) => {
@@ -127,7 +131,8 @@
 			width: 100,
 			filter: true,
 			headerName: 'View',
-			cellRenderer: ({ data }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ data }: any) => {
 				return `<button class="btn" data-action="details" data-id="${data.data.id}">
 					<i class="material-icons">info</i>
 				</button>`;
@@ -136,7 +141,8 @@
 		{
 			width: 100,
 			headerName: 'Update',
-			cellRenderer: ({ data }) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cellRenderer: ({ data }: any) => {
 				const has = bulkUpdateTransactions.find((t) => String(t.data.id) === String(data.data.id));
 				const checked = has ? 'checked' : '';
 				// Just a checkbox to select the transaction for bulk update
