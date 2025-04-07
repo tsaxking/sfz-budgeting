@@ -65,7 +65,9 @@
 	{#snippet body()}
 		<Card card={bucketCard}>
 			{#snippet body()}
-				<button
+			<div class="container-fluid" style="overflow-y: auto; max-height: 100%;">
+				<div class="row mb-3">
+					<button
 					class="btn btn-primary w-100"
 					onclick={async () => {
 						const res = await new Form()
@@ -110,6 +112,9 @@
 					<i class="material-icons"> add </i>
 					New Bucket
 				</button>
+				</div>
+				<div class="row mb-3">
+					
 				<ul class="list p-0">
 					{#each $buckets as bucket}
 						<li class="list-item">
@@ -120,6 +125,9 @@
 						</li>
 					{/each}
 				</ul>
+				</div>
+			</div>
+
 			{/snippet}
 		</Card>
 		<Card card={budgetCard}>
