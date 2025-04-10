@@ -77,7 +77,7 @@
 						data: pivot.map((p) =>
 							p.transactions.reduce((acc, cur) => {
 								if (Number(cur.data.amount) < 0) {
-									return acc + Math.abs(Number(cur.data.amount)) / 100;
+									return acc + Number(cur.data.amount) / 100;
 								}
 								return acc;
 							}, 0)
@@ -87,7 +87,12 @@
 			},
 			options: {
 				responsive: true,
-				maintainAspectRatio: false
+				maintainAspectRatio: false,
+				scales: {
+					y: {
+						stacked: true,
+					}
+				}
 			}
 		});
 	};
