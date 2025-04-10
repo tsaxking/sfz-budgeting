@@ -62,10 +62,24 @@
 				labels: pivot.map((p) => String(p.tag.data.name)),
 				datasets: [
 					{
-						label: 'Transactions',
+						label: 'Income',
+						data: pivot.map(p => 
+							p.transactions.reduce((acc, cur) => {
+								if (Number(cur.data.amount) >= 0) {
+									return acc + Number(cur.data.amount) / 100;
+								}
+								return acc;
+							}, 0)
+						),
+					},
+					{
+						label: 'Expenses',
 						data: pivot.map((p) =>
 							p.transactions.reduce((acc, cur) => {
-								return acc + Number(cur.data.amount) / 100;
+								if (Number(cur.data.amount) < 0) {
+									return acc + Math.abs(Number(cur.data.amount)) / 100;
+								}
+								return acc;
 							}, 0)
 						)
 					}

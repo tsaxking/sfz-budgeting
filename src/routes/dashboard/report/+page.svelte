@@ -14,6 +14,8 @@
 	const startBalance = $state(data.startBalance);
 	const tags = $state(data.tags);
 
+	let renderedTransactions = $state(transactions.data);
+
 	let from = $state(data.from);
 	let to = $state(data.to);
 
@@ -92,19 +94,19 @@
 	</div>
 	<div class="row mb-3">
 		<div style="height: 500px;">
-			<Transactions {transactions} {transactionTags} />
+			<Transactions {transactions} {transactionTags} onfilter={(transactions) => renderedTransactions = transactions}/>
 		</div>
 	</div>
 	<hr />
 	<div class="row mb-3">
 		<h3>All Transactions</h3>
 		<div style="height: 500px;">
-			<Chart transactions={$transactions} balance={startBalance} classes="layer-3" />
+			<Chart transactions={renderedTransactions} balance={startBalance} classes="layer-3" />
 		</div>
 	</div>
 	<hr />
 	<div class="row mb-3">
 		<h3>Tag Transactions</h3>
-		<TagChart transactions={$transactions} {transactionTags} tags={$tags} />
+		<TagChart transactions={renderedTransactions} {transactionTags} tags={$tags} />
 	</div>
 </div>

@@ -51,9 +51,10 @@
 	interface Props {
 		transactions: Transactions.TransactionArr;
 		transactionTags: { [key: string]: Transactions.TransactionTagData[] };
+		onfilter?: (transactions: Transactions.TransactionData[]) => void;
 	}
 
-	const { transactions, transactionTags }: Props = $props();
+	const { transactions, transactionTags, onfilter }: Props = $props();
 
 	let tags = new DataArr(Transactions.Tags, []);
 	let gridDiv: HTMLDivElement;
@@ -284,12 +285,15 @@
 	};
 
 	const renderSummary = () => {
+		const renderedTransactions: Transactions.TransactionData[] = [];
 		income = 0;
 		expenses = 0;
 		total = 0;
 
 		grid.forEachNodeAfterFilter((node) => {
 			const data = node.data as Transactions.TransactionData;
+			if (!data.data.reviewed) return;
+			renderedTransactions.push(data);
 			if (Number(data.data.amount) > 0) {
 				income += Number(data.data.amount);
 			} else {
@@ -298,6 +302,8 @@
 
 			total += Number(data.data.amount);
 		});
+
+		onfilter?.(renderedTransactions);
 	};
 
 	onMount(() => {
