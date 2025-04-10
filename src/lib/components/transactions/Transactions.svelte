@@ -172,7 +172,8 @@
 
 	const checkAll = () => {
 		grid.forEachNodeAfterFilter((node) => {
-			const data = node.data as Transactions.TransactionData;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const data = (node.data as any).transaction as Transactions.TransactionData;
 			if (bulkUpdateTransactions.find((t) => String(t.data.id) === String(data.data.id))) return;
 			bulkUpdateTransactions.push(data);
 			const el = document.querySelector(
@@ -253,6 +254,7 @@
 		const gridOptions: GridOptions = {
 			columnDefs,
 			rowData: $transactions.map((t) => ({
+				transaction: t,
 				data: {
 					...t.data,
 					amount: Number(t.data.amount) / 100,
@@ -291,16 +293,17 @@
 		total = 0;
 
 		grid.forEachNodeAfterFilter((node) => {
-			const data = node.data as Transactions.TransactionData;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const data = (node.data as any).transaction as Transactions.TransactionData;
 			if (!data.data.reviewed) return;
 			renderedTransactions.push(data);
 			if (Number(data.data.amount) > 0) {
-				income += Number(data.data.amount);
+				income += Number(data.data.amount) / 100;
 			} else {
-				expenses += Number(data.data.amount) * -1;
+				expenses -= Number(data.data.amount) / 100;
 			}
 
-			total += Number(data.data.amount);
+			total += Number(data.data.amount) / 100;
 		});
 
 		onfilter?.(renderedTransactions);

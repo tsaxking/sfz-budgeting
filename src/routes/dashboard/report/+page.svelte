@@ -107,6 +107,8 @@
 	<hr />
 	<div class="row mb-3">
 		<h3>Tag Transactions</h3>
-		<TagChart transactions={renderedTransactions} {transactionTags} tags={$tags} />
+		{#key renderedTransactions}
+			<TagChart transactions={renderedTransactions} {transactionTags} tags={$tags} />
+		{/key}
 	</div>
 </div>
